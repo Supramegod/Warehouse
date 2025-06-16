@@ -6,7 +6,7 @@ use App\Models\PenataanGudang;
 
 class GeneticAlgorithmService
 {
-    protected $rakCount = 120;
+    protected $rakCount = 240;
     protected $slotPerRak = 16;
     protected $populationSize = 40;
     protected $generations = 100;
@@ -16,9 +16,9 @@ class GeneticAlgorithmService
 
     // Berat maksimum per level rak (z = 1 bawah, 2 tengah, 3 atas)
     protected $maxWeightPerLevel = [
-        1 => 20000,  // bawah
-        2 => 15000,  // tengah
-        3 => 10000,  // atas
+        1 => 2000000,  // bawah
+        2 => 1500000,  // tengah
+        3 => 1000000,  // atas
     ];
 
     public function run()

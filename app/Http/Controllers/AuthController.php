@@ -17,30 +17,38 @@ class AuthController extends Controller
 
     // Proses login
     public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+{
+    $request->validate([
+        'login' => ['required', 'string'], // Bisa username atau email
+        'password' => ['required'],
+    ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+    $login_type = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-            $user = Auth::user();
-            if ($user->role === 'admin' || $user->role === 'staff') {
-                return redirect()->intended('/');
-            }
+    $credentials = [
+        $login_type => $request->login,
+        'password' => $request->password,
+    ];
 
-            Auth::logout();
-            return back()->withErrors([
-                'email' => 'Anda tidak memiliki akses. Hanya staff dan admin yang bisa login.',
-            ])->onlyInput('email');
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+        if ($user->role === 'admin' || $user->role === 'staff') {
+            return redirect()->intended('/');
         }
 
+        Auth::logout();
         return back()->withErrors([
-            'email' => 'Email atau password salah.',
-        ])->onlyInput('email');
+            'login' => 'Anda tidak memiliki akses.',
+        ])->onlyInput('login');
     }
+
+    return back()->withErrors([
+        'login' => 'Username/email atau password salah.',
+    ])->onlyInput('login');
+}
+
     public function showRegistrationForm()
 {
     return view('auth.register');
@@ -48,23 +56,26 @@ class AuthController extends Controller
 
     // Proses registrasi
     public function register(Request $request)
-    {
-        $data = $request->validate([
-            'name' => ['required','string','max:255'],
-            'email' => ['required','email','max:255','unique:users,email'],
-            'password' => ['required','confirmed','min:6'],
-        ]);
+{
+    $data = $request->validate([
+        'name' => ['required','string','max:255'],
+        'username' => ['required','string','max:255','unique:users,username'],
+        'email' => ['required','email','max:255','unique:users,email'],
+        'password' => ['required','confirmed','min:6'],
+    ]);
 
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role' => 'staff', // default role
-        ]);
+    $user = User::create([
+        'name' => $data['name'],
+        'username' => $data['username'],
+        'email' => $data['email'],
+        'password' => Hash::make($data['password']),
+        'role' => 'staff', // default role
+    ]);
 
-        Auth::login($user);
-        return redirect('/'); // <-- perbaikan dari /dashboard
-    }
+    Auth::login($user);
+    return redirect('/');
+}
+
 
     // Logout
     public function logout(Request $request)

@@ -5,49 +5,52 @@ use App\Models\Item;
 use App\Models\PenataanGudang;
 use App\Models\ExternalBarang;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class GudangController extends Controller
 {
     public function index(Request $request)
-    {
-        // Z-layer dari penataan gudang
-        $z = $request->input('z', 1);
+{
+    // Ambil nilai Z untuk tampilan
+    $z = $request->input('z', 1);
 
-        $data = PenataanGudang::where('koordinat_z', $z)->get();
+    // Data penataan hanya untuk layer Z yang dipilih
+    $data = PenataanGudang::where('koordinat_z', $z)->get();
 
-        $groupedBarang = [];
+    $groupedBarang = [];
 
-        foreach ($data as $item) {
-            $x = $item->koordinat_x;
-            $y = $item->koordinat_y;
-            $zVal = $item->koordinat_z;
+    foreach ($data as $item) {
+        $x = $item->koordinat_x;
+        $y = $item->koordinat_y;
+        $zVal = $item->koordinat_z;
 
-            $groupedBarang[$x][$y][$zVal][] = [
-                'nama_barang' => $item->nama_barang,
-                'jenis_barang' => $item->jenis_barang,
-                'jumlah' => $item->jumlah
-            ];
-        }
-
-        $totalSlot = 80;
-        $slotTerisi = $data->count();
-        $persenOkupansi = ($slotTerisi / $totalSlot) * 100;
-
-        // Data dari model Item (yang sebelumnya di ItemController)
-        $items = Item::paginate(5); // pagination
-        $totalBarang = Item::sum('jumlah_barang'); // total
-
-        // Gabung semuanya ke view
-        return view('index', compact(
-            'groupedBarang',
-            'persenOkupansi',
-            'slotTerisi',
-            'totalSlot',
-            'z',
-            'items',
-            'totalBarang'
-        ));
+        $groupedBarang[$x][$y][$zVal][] = [
+            'nama_barang' => $item->nama_barang,
+            'jenis_barang' => $item->jenis_barang,
+            'jumlah' => $item->jumlah
+        ];
     }
+
+    // Perhitungan okupansi harus dari semua data (tanpa filter Z)
+    $totalSlot = 240; // misal tetap 80
+    $slotTerisi = PenataanGudang::count(); // ambil total semua entri
+    $persenOkupansi = ($slotTerisi / $totalSlot) * 100;
+
+    // Data dari model Item
+    $items = Item::paginate(5);
+    $totalBarang = Item::sum('jumlah_barang');
+
+    return view('index', compact(
+        'groupedBarang',
+        'persenOkupansi',
+        'slotTerisi',
+        'totalSlot',
+        'z',
+        'items',
+        'totalBarang'
+    ));
+}
+
 
     public function ambilDataLuar()
     {

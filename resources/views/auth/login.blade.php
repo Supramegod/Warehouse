@@ -58,11 +58,12 @@
             </div>
           @endif
 
-          <!-- Email input -->
-          <div class="form-outline mb-4">
-            <label class="form-label" for="form3Example3">Email address</label>
-            <input type="email" name="email" id="form3Example3" class="form-control form-control-lg" placeholder="Enter email address" value="{{ old('email') }}" required />
-          </div>
+          <!-- Email or Username input -->
+            <div class="form-outline mb-4">
+              <label class="form-label" for="form3Example3">Email atau Username</label>
+              <input type="text" name="login" id="form3Example3" class="form-control form-control-lg" placeholder="Masukkan email atau username" value="{{ old('login') }}" required />
+            </div>
+
 
           <!-- Password input -->
           <div class="form-outline mb-3">

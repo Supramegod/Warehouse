@@ -9,6 +9,8 @@
 	<link rel="stylesheet" href="assets/css/ready.css">
 	<link rel="stylesheet" href="assets/css/demo.css">
 	<link rel="stylesheet" href="https://cdn.tailwindcss.com">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
 	<div class="wrapper">
@@ -401,43 +403,30 @@
 									.tooltip {
 										position: relative;
 										display: inline-block;
-										width: 100%;
-										height: 100%;
 									}
-									
-									.tooltip .tooltiptext {
+
+									.tooltiptext {
 										visibility: hidden;
-										min-width: 200px;
+										width: 160px;
 										background-color: #333;
 										color: #fff;
 										text-align: left;
-										border-radius: 6px;
-										padding: 10px;
+										border-radius: 5px;
+										padding: 5px;
 										position: absolute;
-										z-index: 1000;
-										bottom: 125%;
+										z-index: 9999;
+										bottom: 125%; /* Naik ke atas elemen */
 										left: 50%;
 										transform: translateX(-50%);
 										opacity: 0;
 										transition: opacity 0.3s;
-										font-size: 12px;
-										box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-										pointer-events: none;
 									}
-									
-									.tooltip .tooltiptext::after {
-										content: "";
-										position: absolute;
-										top: 100%;
-										left: 50%;
-										margin-left: -5px;
-										border-width: 5px;
-										border-style: solid;
-										border-color: #333 transparent transparent transparent;
+
+									.tooltip:hover .tooltiptext {
 										visibility: visible;
-											opacity: 1;
-											pointer-events: auto;
+										opacity: 1;
 									}
+
 									
 									.rack-shelf:hover .tooltip .tooltiptext {
 										visibility: visible;
@@ -551,6 +540,7 @@
 										margin-top: 2px;
 										color: #333;
 									}
+									
 								</style>
 							</div>
                <!-- Legend -->
@@ -645,7 +635,8 @@
 									<p class="card-category">Complete</p>
 								</div>
 								<div class="card-body">
-								<div id="task-complete" class="chart-circle mt-4 mb-3" data-percent="{{ round($persenOkupansi) }}"></div>
+								<canvas id="pieChartOkupansi" width="100" height="100"></canvas>
+
 							</div>
 							<div class="card-footer">
 								<div class="legend">
@@ -654,6 +645,45 @@
 							</div>
 						</div>	
 						</div>
+						<script>
+    const ctx = document.getElementById('pieChartOkupansi').getContext('2d');
+
+    const pieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Terisi', 'Kosong'],
+            datasets: [{
+                label: 'Okupansi Gudang',
+                data: [{{ $slotTerisi }}, {{ $totalSlot - $slotTerisi }}],
+                backgroundColor: ['#007bff', '#e0e0e0'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#333'
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            let value = context.raw || 0;
+                            let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            let percentage = ((value / total) * 100).toFixed(1);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
 								</div>
 
 
