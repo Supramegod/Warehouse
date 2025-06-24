@@ -271,14 +271,14 @@
 													$rackData = $groupedBarang[$x][$y][$z] ?? null;
 
 												@endphp
-												<div class="rack-shelf {{ $rackData ? 'occupied' : '' }}">
+													<div class="rack-shelf {{ $rackData ? 'occupied' : '' }}">
 													@if ($rackData)
 														<div class="tooltip">
 															<span class="item-name">{{ $rackData[0]['nama_barang'] ?? '' }}</span>
 															<div class="tooltiptext">
 																@foreach ($rackData as $item)
-																	<p><strong>Nama Barang:</strong> {{ trim($item['nama_barang']) }}</p>
-																	<p><strong>Jenis Barang:</strong> {{ trim($item['jenis_barang']) }}</p>
+																	<p><strong>Nama:</strong> {{ $item['nama_barang'] }}</p>
+																	<p><strong>Jenis:</strong> {{ $item['jenis_barang'] }}</p>
 																	<p><strong>Jumlah:</strong> {{ $item['jumlah'] }}</p>
 																@endforeach
 															</div>
@@ -307,14 +307,14 @@
 												@php
 													$rackData = $groupedBarang[$x][$y][$z] ?? null;
 												@endphp
-												<div class="rack-shelf {{ $rackData ? 'occupied' : '' }}">
+													<div class="rack-shelf {{ $rackData ? 'occupied' : '' }}">
 													@if ($rackData)
 														<div class="tooltip">
 															<span class="item-name">{{ $rackData[0]['nama_barang'] ?? '' }}</span>
 															<div class="tooltiptext">
 																@foreach ($rackData as $item)
-																	<p><strong>Nama Barang:</strong> {{ $item['nama_barang'] }}</p>
-																	<p><strong>Jenis Barang:</strong> {{ $item['jenis_barang'] }}</p>
+																	<p><strong>Nama:</strong> {{ $item['nama_barang'] }}</p>
+																	<p><strong>Jenis:</strong> {{ $item['jenis_barang'] }}</p>
 																	<p><strong>Jumlah:</strong> {{ $item['jumlah'] }}</p>
 																@endforeach
 															</div>
@@ -420,7 +420,8 @@
 										transform: translateX(-50%);
 										opacity: 0;
 										transition: opacity 0.3s;
-									}
+										}
+									
 
 									.tooltip:hover .tooltiptext {
 										visibility: visible;

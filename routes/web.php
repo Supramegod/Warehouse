@@ -28,6 +28,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     // Halaman dashboard utama setelah login
    Route::get('/index', [GudangController::class, 'index'])->name('index');
+    Route::get('/load-test', function () {
+    return response()->json(['message' => 'Load test success!']);
+    });
 
     Route::get('/', [GudangController::class, 'index']);
     Route::get('/test-external', [GudangController::class, 'testExternalDb']);
